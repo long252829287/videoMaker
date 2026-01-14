@@ -65,13 +65,8 @@ credentials.json
 storage/models/
 storage/cache/
 
-# Generated project assets (images, audio, videos)
-storage/projects/*/assets/images/
-storage/projects/*/assets/audio/
-storage/projects/*/assets/characters/
-storage/projects/*/output/
-storage/projects/*/checkpoints/
-storage/projects/*/report.html
+# Generated project outputs (personal content, not for version control)
+storage/projects/
 
 # Media files
 *.mp4
