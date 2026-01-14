@@ -8,7 +8,7 @@
 
 ```bash
 # 创建虚拟环境
-python -m venv venv （后面就不用执行了）
+python -m venv venv （后面就不用执行了）1
 source venv/bin/activate  # macOS/Linux
 # venv\Scripts\activate   # Windows
 
