@@ -113,10 +113,12 @@ def _validate_shot(data: dict, path: str) -> None:
     if not isinstance(data["visual_prompt"], str) or not data["visual_prompt"].strip():
         raise ValidationError("visual_prompt must be a non-empty string", f"{path}.visual_prompt")
 
-    # Validate shot_type if present
+    # Normalize and validate shot_type if present
     if "shot_type" in data:
+        normalized = data["shot_type"].upper()
         try:
-            ShotType(data["shot_type"])
+            ShotType(normalized)
+            data["shot_type"] = normalized  # Update to normalized value
         except ValueError:
             valid = [t.value for t in ShotType]
             raise ValidationError(
@@ -124,26 +126,57 @@ def _validate_shot(data: dict, path: str) -> None:
                 f"{path}.shot_type"
             )
 
-    # Validate camera_movement if present
+    # Normalize and validate camera_movement if present
     if "camera_movement" in data:
-        try:
-            CameraMovement(data["camera_movement"])
-        except ValueError:
-            valid = [m.value for m in CameraMovement]
-            raise ValidationError(
-                f"Invalid camera_movement: {data['camera_movement']}. Must be one of {valid}",
-                f"{path}.camera_movement"
-            )
+        normalized = data["camera_movement"].upper().replace("_", "").replace("-", "")
+        # Map common variations to enum values
+        movement_map = {
+            "STATIC": "STATIC", "PUSHIN": "PUSH", "PUSH": "PUSH",
+            "PULLOUT": "PULL", "PULL": "PULL",
+            "PANLEFT": "PAN", "PANRIGHT": "PAN", "PAN": "PAN",
+            "TILTUP": "TILT", "TILTDOWN": "TILT", "TILT": "TILT",
+            "DOLLY": "DOLLY", "TRACK": "DOLLY", "TRACKING": "DOLLY",
+            "CRANE": "CRANE", "HANDHELD": "HANDHELD", "ZOOM": "ZOOM",
+        }
+        mapped = movement_map.get(normalized)
+        if mapped:
+            data["camera_movement"] = mapped
+        else:
+            try:
+                CameraMovement(normalized)
+                data["camera_movement"] = normalized
+            except ValueError:
+                valid = [m.value for m in CameraMovement]
+                raise ValidationError(
+                    f"Invalid camera_movement: {data['camera_movement']}. Must be one of {valid}",
+                    f"{path}.camera_movement"
+                )
 
-    # Validate scene_type if present
+    # Validate scene_type if present (lowercase values)
     if "scene_type" in data:
+        normalized = data["scene_type"].lower()
         try:
-            SceneType(data["scene_type"])
+            SceneType(normalized)
+            data["scene_type"] = normalized
         except ValueError:
             valid = [s.value for s in SceneType]
             raise ValidationError(
                 f"Invalid scene_type: {data['scene_type']}. Must be one of {valid}",
                 f"{path}.scene_type"
+            )
+
+    # Validate transition if present (uppercase values)
+    if "transition" in data:
+        from ..shared.models import Transition
+        normalized = data["transition"].upper()
+        try:
+            Transition(normalized)
+            data["transition"] = normalized
+        except ValueError:
+            valid = [t.value for t in Transition]
+            raise ValidationError(
+                f"Invalid transition: {data['transition']}. Must be one of {valid}",
+                f"{path}.transition"
             )
 
     # Validate duration if present

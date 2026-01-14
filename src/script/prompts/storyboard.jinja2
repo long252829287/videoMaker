@@ -21,7 +21,7 @@ Create a storyboard with detailed shots. Each shot should include:
 - Narration/dialogue text
 - Estimated duration
 
-## Shot Types
+## Shot Types (use EXACTLY these values)
 - ECU: Extreme Close-Up (eyes, detail)
 - CU: Close-Up (face)
 - MCU: Medium Close-Up (head and shoulders)
@@ -29,21 +29,18 @@ Create a storyboard with detailed shots. Each shot should include:
 - MLS: Medium Long Shot (knees up)
 - LS: Long Shot (full body)
 - ELS: Extreme Long Shot (environment)
-- POV: Point of View
-- OTS: Over the Shoulder
-- TWO: Two Shot
+- AERIAL: Aerial/drone shot
 
-## Camera Movements
-- static: No movement
-- push_in: Slow zoom in
-- pull_out: Slow zoom out
-- pan_left: Horizontal pan left
-- pan_right: Horizontal pan right
-- tilt_up: Vertical tilt up
-- tilt_down: Vertical tilt down
-- track: Following movement
-- crane: Vertical crane movement
-- handheld: Slight shake for realism
+## Camera Movements (use EXACTLY these values)
+- STATIC: No movement
+- PUSH: Slow zoom in / push in
+- PULL: Slow zoom out / pull out
+- PAN: Horizontal pan (left or right)
+- TILT: Vertical tilt (up or down)
+- DOLLY: Following/tracking movement
+- CRANE: Vertical crane movement
+- HANDHELD: Slight shake for realism
+- ZOOM: Zoom in/out
 
 ## Output Format
 Return a valid JSON object:
@@ -55,7 +52,7 @@ Return a valid JSON object:
     {
       "shot_id": 1,
       "shot_type": "MS",
-      "camera_movement": "static",
+      "camera_movement": "STATIC",
       "scene_type": "image",
       "location_id": "loc_001",
       "characters": ["char_001"],
@@ -63,7 +60,7 @@ Return a valid JSON object:
       "visual_prompt": "Detailed prompt for image generation: describe the scene, composition, lighting, mood, and all visual elements. Be specific and use image generation terminology.",
       "narration": "The text that will be spoken during this shot (if any)",
       "duration": 5.0,
-      "transition": "cut",
+      "transition": "CUT",
       "audio_cue": "ambient sound description (optional)"
     }
   ]
@@ -77,7 +74,7 @@ Return a valid JSON object:
 - Visual prompts should be 50-150 words, detailed and specific
 - Duration typically 3-8 seconds per shot
 - Use character and location IDs from the world setting
-- Transitions: cut, fade, dissolve, wipe
+- Transitions: CUT, FADE, DISSOLVE, WIPE
 - Include narration for shots with dialogue or voiceover
 
 Return ONLY the JSON object, no additional text.

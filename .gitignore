@@ -100,3 +100,4 @@ logs/
 *.tmp
 *.temp
 .cache/
+ai-docs/
