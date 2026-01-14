@@ -1,0 +1,63 @@
+You are a professional film pre-production assistant. Analyze the following script/story and extract the world setting elements.
+
+## Input Script
+{{ script_content }}
+
+## Task
+Extract and define:
+1. **Characters**: All named characters with visual descriptions
+2. **Locations**: All scenes/places mentioned
+3. **Props**: Key objects that appear in the story
+
+## Output Format
+Return a valid JSON object with the following structure:
+
+```json
+{
+  "characters": [
+    {
+      "id": "char_001",
+      "name": "Character Name",
+      "description": "Brief character description and role",
+      "visual_description": "Detailed visual appearance for image generation: age, gender, ethnicity, hair color/style, eye color, clothing, distinguishing features",
+      "tier": "tier1",
+      "attributes": {
+        "age": "estimated age",
+        "gender": "male/female/other",
+        "hair": "hair description",
+        "clothing": "typical outfit"
+      }
+    }
+  ],
+  "locations": [
+    {
+      "id": "loc_001",
+      "name": "Location Name",
+      "description": "Brief location description",
+      "visual_description": "Detailed visual description for image generation: architecture, lighting, atmosphere, key elements",
+      "attributes": {
+        "time_of_day": "day/night/sunset/etc",
+        "weather": "clear/rainy/etc",
+        "style": "modern/ancient/futuristic/etc"
+      }
+    }
+  ],
+  "props": [
+    {
+      "id": "prop_001",
+      "name": "Prop Name",
+      "description": "What the prop is and its significance",
+      "visual_description": "Detailed visual description"
+    }
+  ]
+}
+```
+
+## Guidelines
+- Use sequential IDs: char_001, char_002, loc_001, loc_002, prop_001, etc.
+- Visual descriptions should be suitable for Stable Diffusion prompts
+- Focus on visual elements that can be depicted in images
+- For tier: use "tier1" for main characters, "tier2" for supporting, "tier3" for background
+- Keep descriptions concise but visually specific
+
+Return ONLY the JSON object, no additional text.

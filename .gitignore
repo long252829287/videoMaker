@@ -1,0 +1,102 @@
+# ============================================================
+# Python
+# ============================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# ============================================================
+# Virtual Environment
+# ============================================================
+venv/
+env/
+ENV/
+.venv
+
+# ============================================================
+# IDE & Editor
+# ============================================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# ============================================================
+# Testing & Coverage
+# ============================================================
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.hypothesis/
+
+# ============================================================
+# Sensitive Configuration
+# ============================================================
+.env
+.env.local
+*.key
+*.pem
+credentials.json
+
+# ============================================================
+# AI Model & Generated Assets (Large Files)
+# ============================================================
+# ComfyUI / AI models
+storage/models/
+storage/cache/
+
+# Generated project assets (images, audio, videos)
+storage/projects/*/assets/images/
+storage/projects/*/assets/audio/
+storage/projects/*/assets/characters/
+storage/projects/*/output/
+storage/projects/*/checkpoints/
+storage/projects/*/report.html
+
+# Media files
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.wav
+*.mp3
+*.flac
+*.aac
+
+# ============================================================
+# Logs
+# ============================================================
+*.log
+logs/
+
+# ============================================================
+# Claude Configuration (User chose not to commit)
+# ============================================================
+.claude/
+
+# ============================================================
+# Temporary Files
+# ============================================================
+*.tmp
+*.temp
+.cache/

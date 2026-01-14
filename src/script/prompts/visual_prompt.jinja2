@@ -1,0 +1,43 @@
+{# Visual Prompt Generator - Combines shot, characters, location, and style #}
+
+{# Start with shot description #}
+{{ shot.visual_prompt }}
+
+{# Add character details #}
+{% for character in characters %}
+{% if character.visual_description %}
+, {{ character.name }}: {{ character.visual_description }}
+{% endif %}
+{% endfor %}
+
+{# Add location details #}
+{% if location %}
+{% if location.visual_description %}
+, setting: {{ location.visual_description }}
+{% endif %}
+{% if location.attributes %}
+{% if location.attributes.time_of_day %}
+, {{ location.attributes.time_of_day }} lighting
+{% endif %}
+{% if location.attributes.weather %}
+, {{ location.attributes.weather }} weather
+{% endif %}
+{% endif %}
+{% endif %}
+
+{# Add technical shot parameters #}
+{% if shot.shot_type %}
+, {{ shot.shot_type }} shot
+{% endif %}
+
+{% if shot.camera_movement and shot.camera_movement != 'static' %}
+, {{ shot.camera_movement }} camera movement
+{% endif %}
+
+{# Add global style #}
+{% if global_style %}
+, {{ global_style }}
+{% endif %}
+
+{# Quality tags #}
+, masterpiece, best quality, highly detailed, professional photography

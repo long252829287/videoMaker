@@ -1,0 +1,110 @@
+{
+  "project_id": "5ec9ec08f7f643faa5c998a09bb2ba3d",
+  "title": "",
+  "style": "",
+  "style_prompt": "cinematic lighting, 8k, photorealistic",
+  "characters": [
+    {
+      "id": "char_001",
+      "name": "Old Man",
+      "gender": "",
+      "age": "",
+      "description": "An elderly musician sitting on the street corner playing a flute.",
+      "visual_description": "Elderly male with long white hair and beard, wearing traditional simple linen robes, sitting cross-legged on a low stool at the street corner, holding a bamboo flute to his lips, serene and peaceful expression, soft focus background.",
+      "appearance": null,
+      "outfit": null,
+      "personality": "",
+      "voice_profile": null,
+      "tier": "tier2",
+      "attributes": {
+        "age": "70+",
+        "gender": "male",
+        "hair": "white, long",
+        "clothing": "traditional linen robes"
+      }
+    },
+    {
+      "id": "char_002",
+      "name": "Young Couple",
+      "gender": "",
+      "age": "",
+      "description": "A pair of young lovers saying goodbye under a lantern.",
+      "visual_description": "Young man and young woman standing close together, holding hands, gazing into each other's eyes, illuminated by the warm glow of a hanging red lantern above them, creating a romantic silhouette, semi-formal or modern casual attire.",
+      "appearance": null,
+      "outfit": null,
+      "personality": "",
+      "voice_profile": null,
+      "tier": "tier2",
+      "attributes": {
+        "age": "20-25",
+        "gender": "male and female",
+        "hair": "varied",
+        "clothing": "modern casual or semi-formal"
+      }
+    },
+    {
+      "id": "char_003",
+      "name": "Children",
+      "gender": "",
+      "age": "",
+      "description": "A group of curious kids gathered around a snack stall.",
+      "visual_description": "Group of three or four young children, varied heights, pointing fingers excitedly at a food stall, expressions of curiosity and delight, wearing colorful playful clothing.",
+      "appearance": null,
+      "outfit": null,
+      "personality": "",
+      "voice_profile": null,
+      "tier": "tier3",
+      "attributes": {
+        "age": "5-10",
+        "gender": "mixed",
+        "hair": "varied",
+        "clothing": "colorful casual wear"
+      }
+    }
+  ],
+  "locations": [
+    {
+      "id": "loc_001",
+      "name": "Ancient Town Street",
+      "description": "A bustling stone-paved street in an old town.",
+      "visual_description": "Wide street paved with weathered grey stone slabs, lined with traditional ancient Chinese architecture, crowded with people, warm ambient lighting from lanterns, vibrant and colorful atmosphere, cinematic shot.",
+      "lighting": "neutral",
+      "atmosphere": "",
+      "attributes": {
+        "time_of_day": "evening",
+        "weather": "clear",
+        "style": "ancient/traditional"
+      }
+    },
+    {
+      "id": "loc_002",
+      "name": "Street Corner",
+      "description": "A quiet corner where the old man sits.",
+      "visual_description": "Corner of the stone street, slightly recessed area, shadowed but illuminated by soft lantern light, stone textures, intimate setting.",
+      "lighting": "neutral",
+      "atmosphere": "",
+      "attributes": {
+        "time_of_day": "evening",
+        "weather": "clear",
+        "style": "ancient"
+      }
+    }
+  ],
+  "props": [
+    {
+      "id": "prop_001",
+      "name": "Tanghulu (Candied Hawthorn)",
+      "description": "Traditional snack on a skewer, steaming hot."
+    },
+    {
+      "id": "prop_002",
+      "name": "Red Lanterns",
+      "description": "Hanging lights providing illumination."
+    },
+    {
+      "id": "prop_003",
+      "name": "Bamboo Flute",
+      "description": "Woodwind instrument played by the old man."
+    }
+  ]
+}

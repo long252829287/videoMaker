@@ -1,0 +1,83 @@
+You are a professional storyboard artist and director. Create a detailed shot-by-shot storyboard from the following script.
+
+## Input Script
+{{ script_content }}
+
+## World Setting (Reference)
+```json
+{{ world_setting | tojson(indent=2) }}
+```
+
+{% if global_style %}
+## Global Visual Style
+{{ global_style }}
+{% endif %}
+
+## Task
+Create a storyboard with detailed shots. Each shot should include:
+- Shot type and camera movement
+- Characters and location
+- Visual description for image generation
+- Narration/dialogue text
+- Estimated duration
+
+## Shot Types
+- ECU: Extreme Close-Up (eyes, detail)
+- CU: Close-Up (face)
+- MCU: Medium Close-Up (head and shoulders)
+- MS: Medium Shot (waist up)
+- MLS: Medium Long Shot (knees up)
+- LS: Long Shot (full body)
+- ELS: Extreme Long Shot (environment)
+- POV: Point of View
+- OTS: Over the Shoulder
+- TWO: Two Shot
+
+## Camera Movements
+- static: No movement
+- push_in: Slow zoom in
+- pull_out: Slow zoom out
+- pan_left: Horizontal pan left
+- pan_right: Horizontal pan right
+- tilt_up: Vertical tilt up
+- tilt_down: Vertical tilt down
+- track: Following movement
+- crane: Vertical crane movement
+- handheld: Slight shake for realism
+
+## Output Format
+Return a valid JSON object:
+
+```json
+{
+  "title": "Story Title",
+  "shots": [
+    {
+      "shot_id": 1,
+      "shot_type": "MS",
+      "camera_movement": "static",
+      "scene_type": "image",
+      "location_id": "loc_001",
+      "characters": ["char_001"],
+      "description": "Brief description of what happens in this shot",
+      "visual_prompt": "Detailed prompt for image generation: describe the scene, composition, lighting, mood, and all visual elements. Be specific and use image generation terminology.",
+      "narration": "The text that will be spoken during this shot (if any)",
+      "duration": 5.0,
+      "transition": "cut",
+      "audio_cue": "ambient sound description (optional)"
+    }
+  ]
+}
+```
+
+## Guidelines
+- Create logical flow between shots
+- Vary shot types for visual interest
+- Match camera movement to emotional tone
+- Visual prompts should be 50-150 words, detailed and specific
+- Duration typically 3-8 seconds per shot
+- Use character and location IDs from the world setting
+- Transitions: cut, fade, dissolve, wipe
+- Include narration for shots with dialogue or voiceover
+
+Return ONLY the JSON object, no additional text.
