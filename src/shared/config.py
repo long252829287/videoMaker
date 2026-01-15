@@ -97,6 +97,23 @@ class Config(BaseModel):
     @classmethod
     def from_env(cls) -> "Config":
         """Load configuration from environment variables"""
+        llm_max_tokens_raw = os.getenv("LLM_MAX_TOKENS")
+        llm_temperature_raw = os.getenv("LLM_TEMPERATURE")
+
+        llm_max_tokens = 4096
+        if llm_max_tokens_raw:
+            try:
+                llm_max_tokens = int(llm_max_tokens_raw)
+            except ValueError:
+                llm_max_tokens = 4096
+
+        llm_temperature = 0.7
+        if llm_temperature_raw:
+            try:
+                llm_temperature = float(llm_temperature_raw)
+            except ValueError:
+                llm_temperature = 0.7
+
         return cls(
             debug=os.getenv("DEBUG", "false").lower() == "true",
             comfyui=ComfyUIConfig(
@@ -108,6 +125,8 @@ class Config(BaseModel):
                 model=os.getenv("LLM_MODEL", "glm-4"),
                 api_key=os.getenv("LLM_API_KEY") or os.getenv("ANTHROPIC_API_KEY") or os.getenv("OPENAI_API_KEY"),
                 base_url=os.getenv("LLM_BASE_URL"),
+                max_tokens=llm_max_tokens,
+                temperature=llm_temperature,
             ),
             tts=TTSConfig(
                 provider=os.getenv("TTS_PROVIDER", "edge-tts"),

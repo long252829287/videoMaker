@@ -108,7 +108,7 @@ class ImageGenerator:
 
         # Submit and wait
         logger.info(f"Generating image for shot {shot.shot_id}")
-        output = self.client.submit_and_wait(workflow.build(), timeout=180.0)
+        output = self.client.submit_and_wait(workflow.build(), timeout=900.0)
 
         # Get versioned output path
         output_path = get_asset_path(

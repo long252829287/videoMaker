@@ -40,6 +40,99 @@ class VideoEncoder:
         self.audio_codec = audio_codec
         self.preset = preset
         self.config = get_config()
+        self._moviepy_cache: Optional[dict] = None
+
+    def _get_moviepy(self) -> dict:
+        """
+        MoviePy 2.x removed `moviepy.editor`. We support both import styles.
+        Cache the resolved symbols to avoid repeated imports.
+        """
+        if self._moviepy_cache is not None:
+            return self._moviepy_cache
+
+        try:
+            from moviepy import (
+                ImageClip,
+                AudioFileClip,
+                CompositeVideoClip,
+                concatenate_videoclips,
+                concatenate_audioclips,
+                CompositeAudioClip,
+                ColorClip,
+                afx,
+            )
+            self._moviepy_cache = {
+                "ImageClip": ImageClip,
+                "AudioFileClip": AudioFileClip,
+                "CompositeVideoClip": CompositeVideoClip,
+                "concatenate_videoclips": concatenate_videoclips,
+                "concatenate_audioclips": concatenate_audioclips,
+                "CompositeAudioClip": CompositeAudioClip,
+                "ColorClip": ColorClip,
+                "afx": afx,
+            }
+            return self._moviepy_cache
+        except ImportError:
+            pass
+
+        try:
+            from moviepy.editor import (  # type: ignore
+                ImageClip,
+                AudioFileClip,
+                CompositeVideoClip,
+                concatenate_videoclips,
+                concatenate_audioclips,
+                CompositeAudioClip,
+                ColorClip,
+                afx,
+            )
+            self._moviepy_cache = {
+                "ImageClip": ImageClip,
+                "AudioFileClip": AudioFileClip,
+                "CompositeVideoClip": CompositeVideoClip,
+                "concatenate_videoclips": concatenate_videoclips,
+                "concatenate_audioclips": concatenate_audioclips,
+                "CompositeAudioClip": CompositeAudioClip,
+                "ColorClip": ColorClip,
+                "afx": afx,
+            }
+            return self._moviepy_cache
+        except ImportError as e:
+            raise RuntimeError(
+                "moviepy 导入失败：请确认已在当前虚拟环境安装 moviepy。"
+                "如果你安装的是 moviepy>=2（没有 moviepy.editor），本项目已兼容；"
+                "若仍失败，请贴出 `python -c \"import moviepy; print(moviepy.__version__)\"` 的输出。"
+            ) from e
+
+    def _with_duration(self, clip, duration: float):
+        """MoviePy v1 uses set_duration; v2 uses with_duration."""
+        if hasattr(clip, "set_duration"):
+            return clip.set_duration(duration)
+        return clip.with_duration(duration)
+
+    def _with_audio(self, clip, audio):
+        """MoviePy v1 uses set_audio; v2 uses with_audio."""
+        if hasattr(clip, "set_audio"):
+            return clip.set_audio(audio)
+        return clip.with_audio(audio)
+
+    def _resized(self, clip, size: tuple[int, int]):
+        """MoviePy v1 uses resize; v2 uses resized."""
+        if hasattr(clip, "resize"):
+            return clip.resize(size)
+        return clip.resized(new_size=size)
+
+    def _audio_with_volume(self, audio_clip, volume: float):
+        """MoviePy v1 uses volumex; v2 uses with_volume_scaled."""
+        if hasattr(audio_clip, "volumex"):
+            return audio_clip.volumex(volume)
+        return audio_clip.with_volume_scaled(volume)
+
+    def _audio_subclip(self, audio_clip, start: float, end: float):
+        """MoviePy v1 uses subclip; v2 uses subclipped."""
+        if hasattr(audio_clip, "subclip"):
+            return audio_clip.subclip(start, end)
+        return audio_clip.subclipped(start, end)
 
     def render(
         self,
@@ -60,13 +153,8 @@ class VideoEncoder:
         Returns:
             Path to rendered video
         """
-        try:
-            from moviepy.editor import (
-                ImageClip, AudioFileClip, CompositeVideoClip,
-                concatenate_videoclips, CompositeAudioClip
-            )
-        except ImportError:
-            raise RuntimeError("moviepy not installed. Run: pip install moviepy")
+        mp = self._get_moviepy()
+        concatenate_videoclips = mp["concatenate_videoclips"]
 
         logger.info(f"Starting render: {len(mixed_timeline.clips)} clips")
 
@@ -125,19 +213,22 @@ class VideoEncoder:
 
     def _create_video_clip(self, clip: MixedClip, timeline: MixedTimeline):
         """Create video clip from mixed clip"""
-        from moviepy.editor import ImageClip, AudioFileClip, CompositeAudioClip
+        mp = self._get_moviepy()
+        ImageClip = mp["ImageClip"]
+        AudioFileClip = mp["AudioFileClip"]
+        CompositeAudioClip = mp["CompositeAudioClip"]
+        ColorClip = mp["ColorClip"]
 
         # Create base video from image
         if clip.image_path and Path(clip.image_path).exists():
-            video = ImageClip(clip.image_path).set_duration(clip.duration)
-            video = video.resize((timeline.width, timeline.height))
+            video = self._with_duration(ImageClip(clip.image_path), clip.duration)
+            video = self._resized(video, (timeline.width, timeline.height))
         else:
             # Fallback to black frame
-            from moviepy.editor import ColorClip
-            video = ColorClip(
+            video = self._with_duration(ColorClip(
                 size=(timeline.width, timeline.height),
                 color=(0, 0, 0)
-            ).set_duration(clip.duration)
+            ), clip.duration)
 
         # Apply Ken Burns effect
         if clip.ken_burns:
@@ -149,20 +240,20 @@ class VideoEncoder:
         # Narration
         if clip.narration_path and Path(clip.narration_path).exists():
             narration = AudioFileClip(clip.narration_path)
-            narration = narration.volumex(clip.narration_volume)
+            narration = self._audio_with_volume(narration, clip.narration_volume)
             audio_clips.append(narration)
 
         # Sound effects
         for sfx_path in clip.sfx_paths:
             if Path(sfx_path).exists():
                 sfx = AudioFileClip(sfx_path)
-                sfx = sfx.volumex(clip.sfx_volume)
+                sfx = self._audio_with_volume(sfx, clip.sfx_volume)
                 audio_clips.append(sfx)
 
         # Combine audio
         if audio_clips:
             combined_audio = CompositeAudioClip(audio_clips)
-            video = video.set_audio(combined_audio)
+            video = self._with_audio(video, combined_audio)
 
         return video
 
@@ -206,30 +297,34 @@ class VideoEncoder:
 
             return np.array(resized)
 
-        return clip.fl(make_frame)
+        if hasattr(clip, "fl"):
+            return clip.fl(make_frame)
+        return clip.transform(make_frame)
 
     def _add_bgm(self, video, bgm_path: str, volume: float):
         """Add background music to video"""
-        from moviepy.editor import AudioFileClip, CompositeAudioClip
+        mp = self._get_moviepy()
+        AudioFileClip = mp["AudioFileClip"]
+        CompositeAudioClip = mp["CompositeAudioClip"]
+        concatenate_audioclips = mp["concatenate_audioclips"]
 
         bgm = AudioFileClip(bgm_path)
 
         # Loop BGM if shorter than video
         if bgm.duration < video.duration:
-            from moviepy.editor import afx
             loops = int(video.duration / bgm.duration) + 1
-            bgm = afx.audio_loop(bgm, nloops=loops)
+            bgm = concatenate_audioclips([bgm] * loops)
 
         # Trim to video duration
-        bgm = bgm.subclip(0, video.duration)
-        bgm = bgm.volumex(volume)
+        bgm = self._audio_subclip(bgm, 0, video.duration)
+        bgm = self._audio_with_volume(bgm, volume)
 
         # Mix with existing audio
         if video.audio:
             combined = CompositeAudioClip([video.audio, bgm])
-            video = video.set_audio(combined)
+            video = self._with_audio(video, combined)
         else:
-            video = video.set_audio(bgm)
+            video = self._with_audio(video, bgm)
 
         return video
 
