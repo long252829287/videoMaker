@@ -304,13 +304,13 @@ def run_full_pipeline(input_file: str, output_dir: str, debug: bool, dry_run: bo
         )
         click.echo(f"  ✓ Timeline built: {timeline.total_duration:.2f}s total")
 
-        # Generate subtitles
+        # Generate subtitles (ASS format for better CJK styling)
         subtitle_gen = SubtitleGenerator()
         subtitle_gen.generate_from_shots(storyboard.shots, audio_results)
         subtitle_gen.split_long_lines(max_chars=40)
-        srt_path = project_dir / "subtitles.srt"
-        subtitle_gen.export_srt(str(srt_path))
-        click.echo(f"  ✓ Subtitles saved: {srt_path}")
+        ass_path = project_dir / "subtitles.ass"
+        subtitle_gen.export_ass(str(ass_path), style_name="Narration")
+        click.echo(f"  ✓ Subtitles saved: {ass_path}")
 
         # Mix timeline
         mixer = Mixer(
@@ -355,7 +355,7 @@ def run_full_pipeline(input_file: str, output_dir: str, debug: bool, dry_run: bo
             encoder.render(
                 mixed_timeline,
                 str(output_video),
-                subtitle_path=str(srt_path)
+                subtitle_path=str(ass_path)
             )
             click.echo(f"  ✓ Video rendered: {output_video}")
             reporter.add_stage_result("render", "success")

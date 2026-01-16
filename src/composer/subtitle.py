@@ -64,16 +64,19 @@ class SubtitleGenerator:
     - ASS format (styled, for CJK)
     """
 
-    # ASS header template
+    # ASS header template with better CJK styling
     ASS_HEADER = """[Script Info]
+Title: Video Subtitles
 ScriptType: v4.00+
 PlayResX: 1920
 PlayResY: 1080
 WrapStyle: 0
+ScaledBorderAndShadow: yes
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Default,Noto Sans CJK SC,48,&H00FFFFFF,&H000000FF,&H00000000,&H80000000,-1,0,0,0,100,100,0,0,1,2,1,2,20,20,30,1
+Style: Default,PingFang SC,52,&H00FFFFFF,&H000000FF,&H00000000,&H80000000,-1,0,0,0,100,100,0,0,1,3,2,2,40,40,50,1
+Style: Narration,PingFang SC,48,&H00FFFFFF,&H000000FF,&H00222222,&H80000000,0,0,0,0,100,100,0,0,1,2.5,1.5,2,40,40,50,1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text

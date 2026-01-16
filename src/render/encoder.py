@@ -184,17 +184,20 @@ class VideoEncoder:
                 mixed_timeline.global_bgm_volume
             )
 
-        # Burn subtitles if provided
-        if subtitle_path and Path(subtitle_path).exists():
-            final_video = self._burn_subtitles(final_video, subtitle_path)
-
         # Ensure output directory exists
         Path(output_path).parent.mkdir(parents=True, exist_ok=True)
 
+        # Determine output paths for subtitle burning
+        needs_subtitle_burn = subtitle_path and Path(subtitle_path).exists()
+        if needs_subtitle_burn:
+            temp_output = output_path.replace(".mp4", "_temp.mp4")
+        else:
+            temp_output = output_path
+
         # Write output
-        logger.info(f"Encoding to {output_path}...")
+        logger.info(f"Encoding to {temp_output}...")
         final_video.write_videofile(
-            output_path,
+            temp_output,
             fps=self.fps,
             codec=self.codec,
             audio_codec=self.audio_codec,
@@ -203,10 +206,18 @@ class VideoEncoder:
             logger=None  # Suppress moviepy's verbose output
         )
 
-        # Cleanup
+        # Cleanup moviepy resources
         final_video.close()
         for clip in video_clips:
             clip.close()
+
+        # Burn subtitles using ffmpeg (post-process)
+        if needs_subtitle_burn:
+            logger.info(f"Burning subtitles: {subtitle_path}")
+            burn_subtitles_ffmpeg(temp_output, subtitle_path, output_path)
+            # Remove temp file
+            Path(temp_output).unlink(missing_ok=True)
+            logger.info(f"Subtitles burned successfully")
 
         logger.info(f"Render complete: {output_path}")
         return output_path

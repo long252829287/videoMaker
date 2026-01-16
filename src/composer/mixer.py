@@ -156,15 +156,101 @@ class Mixer:
 
         Args:
             duration: Clip duration
-            camera_movement: Desired camera movement type
+            camera_movement: Desired camera movement type (CameraMovement enum value)
 
         Returns:
             Ken Burns parameters dict, or None if static
         """
-        if camera_movement == "static":
+        # Normalize camera_movement to uppercase for enum matching
+        movement = camera_movement.upper() if camera_movement else "STATIC"
+
+        if movement == "STATIC":
             return None
 
+        # Map CameraMovement enum values to Ken Burns effects
         effects = {
+            # PUSH -> zoom in slowly
+            "PUSH": {
+                "start_scale": 1.0,
+                "end_scale": 1.15,
+                "start_x": 0.5,
+                "start_y": 0.5,
+                "end_x": 0.5,
+                "end_y": 0.5
+            },
+            # PULL -> zoom out slowly
+            "PULL": {
+                "start_scale": 1.15,
+                "end_scale": 1.0,
+                "start_x": 0.5,
+                "start_y": 0.5,
+                "end_x": 0.5,
+                "end_y": 0.5
+            },
+            # PAN -> horizontal movement (default: left to right)
+            "PAN": {
+                "start_scale": 1.15,
+                "end_scale": 1.15,
+                "start_x": 0.35,
+                "start_y": 0.5,
+                "end_x": 0.65,
+                "end_y": 0.5
+            },
+            # TILT -> vertical movement (default: bottom to top)
+            "TILT": {
+                "start_scale": 1.15,
+                "end_scale": 1.15,
+                "start_x": 0.5,
+                "start_y": 0.6,
+                "end_x": 0.5,
+                "end_y": 0.4
+            },
+            # DOLLY -> similar to push but with slight pan
+            "DOLLY": {
+                "start_scale": 1.0,
+                "end_scale": 1.12,
+                "start_x": 0.45,
+                "start_y": 0.5,
+                "end_x": 0.55,
+                "end_y": 0.5
+            },
+            # CRANE -> vertical + zoom combination
+            "CRANE": {
+                "start_scale": 1.0,
+                "end_scale": 1.1,
+                "start_x": 0.5,
+                "start_y": 0.6,
+                "end_x": 0.5,
+                "end_y": 0.4
+            },
+            # HANDHELD -> subtle random-like movement (slight zoom + pan)
+            "HANDHELD": {
+                "start_scale": 1.02,
+                "end_scale": 1.05,
+                "start_x": 0.48,
+                "start_y": 0.52,
+                "end_x": 0.52,
+                "end_y": 0.48
+            },
+            # ZOOM -> aggressive zoom in
+            "ZOOM": {
+                "start_scale": 1.0,
+                "end_scale": 1.25,
+                "start_x": 0.5,
+                "start_y": 0.5,
+                "end_x": 0.5,
+                "end_y": 0.5
+            },
+            # AERIAL -> slow pull out with slight tilt (bird's eye feeling)
+            "AERIAL": {
+                "start_scale": 1.15,
+                "end_scale": 1.0,
+                "start_x": 0.5,
+                "start_y": 0.55,
+                "end_x": 0.5,
+                "end_y": 0.45
+            },
+            # Legacy lowercase mappings for backward compatibility
             "push_in": {
                 "start_scale": 1.0,
                 "end_scale": 1.1,
@@ -215,7 +301,10 @@ class Mixer:
             }
         }
 
-        return effects.get(camera_movement)
+        result = effects.get(movement)
+        if result:
+            logger.debug(f"Ken Burns effect applied: {movement}")
+        return result
 
     def add_sfx(
         self,
